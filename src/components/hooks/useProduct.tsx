@@ -1,5 +1,5 @@
 import { usePathname } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import useSWR, { SWRResponse } from 'swr'
 import { fetcher } from '../../utils/fetcher'
 
@@ -35,9 +35,13 @@ export const useProduct = () => {
 		fetcher
 	)
 
-	useEffect(() => {
+	useMemo(() => {
 		if (path.includes('product')) {
 			setProductId(path.split('/')[2])
+		}
+
+		return () => {
+			setProductId('')
 		}
 	}, [path, productData])
 

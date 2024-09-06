@@ -50,7 +50,7 @@ export const MenuProfileModal = ({
 			<Padding>
 				<View
 					style={{ marginTop: Platform.OS === 'ios' ? insets.top / 2 : 16 }}
-					className='flex-row justify-between mb-[17px]'
+					className='flex-row items-center justify-between mb-[17px]'
 				>
 					{/* TITLE */}
 					<Link href={'/'}>
@@ -68,11 +68,14 @@ export const MenuProfileModal = ({
 					<View className='flex-row items-center'>
 						<Pressable
 							className={`${Platform.OS === 'ios' ? 'mt-[4px]' : ''}`}
-							onPress={() => setBasketVisible(true)}
+							onPress={() => {
+								setIsVisible(false)
+								setBasketVisible(true)
+							}}
 						>
 							<View
 								style={{ marginRight: 7 }}
-								className='items-center justify-center w-[30px] h-[30px] rounded-full'
+								className='items-center justify-center w-[40px] h-[40px] rounded-full'
 							>
 								<ShoppingCart />
 							</View>
@@ -81,7 +84,7 @@ export const MenuProfileModal = ({
 							className={`${Platform.OS === 'ios' ? 'mt-[4px]' : ''}`}
 							onPress={() => setIsVisible(false)}
 						>
-							<View className='items-center justify-center w-[30px] h-[30px] rounded-full'>
+							<View className='items-center justify-center w-[40px] h-[40px] rounded-full'>
 								<CloseButton />
 							</View>
 						</Pressable>
@@ -97,33 +100,29 @@ export const MenuProfileModal = ({
 				/>
 				{/* GENERAL LINKS  */}
 				<View className='py-[39px] border-b-[1px] border-b-[#D8D8D8]'>
-					<View>
-						{links.map((link, i) => (
-							<Pressable
-								key={i}
-								className={`${i + 1 < links.length ? 'mb-[24px]' : ''}`}
-								onPress={() => setIsVisible(false)}
-							>
-								<Link href={link.link}>
-									<Text className='text-[20px] leading-[26px]'>
-										{link.title}
-									</Text>
-								</Link>
-							</Pressable>
-						))}
-					</View>
+					{links.map((link, i) => (
+						<Pressable
+							key={i}
+							className={`${i + 1 < links.length ? 'mb-[10px]' : ''} py-[10px]`}
+							onPress={() => setIsVisible(false)}
+						>
+							<Link href={link.link}>
+								<Text className='text-[20px] leading-[26px]'>{link.title}</Text>
+							</Link>
+						</Pressable>
+					))}
 				</View>
 				{/* ACCOUNT & LOGOUT  */}
 				<View className='mt-[24px]'>
 					{/*GO TO ACCOUNT  */}
 					<Pressable
-						className='mb-[32px]'
+						className='mb-[12px]'
 						onPress={() => {
 							setIsVisible(false)
 							router.push(href)
 						}}
 					>
-						<View className='flex-row items-center rounded-[4px] px-[4px] py-[2px]'>
+						<View className='flex-row items-center rounded-[4px] px-[4px] py-[10px] '>
 							<Profile className='mr-[10px]' />
 							<Text className='text-[20px] font-normal leading-[26px]'>
 								My account
@@ -134,18 +133,17 @@ export const MenuProfileModal = ({
 					{user?.username && (
 						<Pressable
 							onPress={() => {
-								setIsVisible(false)
 								deleteToken()
+								setIsVisible(false)
+								router.push('/')
 							}}
 						>
-							<Link href='/'>
-								<View className='flex-row items-center gap-[10px] text-left rounded-[4px] px-[4px] py-[2px]'>
-									<LogOut className='mr-[10px]' />
-									<Text className='text-[20px] font-normal leading-[26px]'>
-										Logout
-									</Text>
-								</View>
-							</Link>
+							<View className='flex-row items-center rounded-[4px] px-[4px] py-[10px] '>
+								<LogOut className='mr-[10px]' />
+								<Text className='text-[20px] font-normal leading-[26px]'>
+									Log Out
+								</Text>
+							</View>
 						</Pressable>
 					)}
 				</View>

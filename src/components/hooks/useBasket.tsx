@@ -1,7 +1,8 @@
-import { BACK_PORT } from '@env'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import useSWR, { SWRResponse } from 'swr'
+import { deletedProductInBasket } from '../../lib/reducers/Product'
 import { fetcher } from '../../utils/fetcher'
 import { useProduct } from './useProduct'
 import { useUser } from './useUser'
@@ -34,7 +35,7 @@ export const useBasket = () => {
 	}: SWRResponse<BasketData[], any, any> = useSWR(
 		() =>
 			user && {
-				url: `${BACK_PORT}basket/${user._id}`,
+				url: `${process.env.BACK_PORT}basket/${user._id}`,
 			},
 		fetcher
 	)
@@ -42,43 +43,62 @@ export const useBasket = () => {
 
 	const [isBasked, setIsBasked] = useState<ProductIsBasket[]>([])
 
-	useEffect(() => {
+	useMemo(() => {
 		basketData?.map((item) =>
 			item.product?._id === productId
-				? setIsBasked((prev) => [
-						...prev,
-						{ productId: productId, qty: item.qty },
-				  ])
+				? setIsBasked((prev) => {
+						return [...prev, { productId: productId, qty: item.qty }]
+				  })
 				: ''
 		)
+
+		return () => {
+			setIsBasked(() => {
+				return []
+			})
+		}
 	}, [basketData, productId])
 
 	// CALCULATED FULL ITEMS && END PRICE
-	const [numberItems, setNumberItems] = useState(0)
-	const [allPrice, setAllPrice] = useState(0)
+	const [numberItems, setNumberItems] = useState<null | number>(0)
+	const [allPrice, setAllPrice] = useState<null | number>(0)
 
-	useEffect(() => {
+	useMemo(() => {
 		let countItems = 0
 		let countAllPrice = 0
 		basketData?.map((item) => {
 			countItems += item.qty
 			countAllPrice += item.product?.price * item?.qty
 		})
-		setNumberItems(countItems)
-		setAllPrice(countAllPrice)
+		setNumberItems(() => {
+			return countItems
+		})
+		setAllPrice(() => {
+			return countAllPrice
+		})
+
+		return () => {
+			setNumberItems(() => {
+				return null
+			})
+			setAllPrice(() => {
+				return null
+			})
+		}
 	}, [basketData])
 
 	// ВКЛЮЧАЕТ ЗАГРУЗОЧНУЮ АНИМАЦИЮ
 	const [isAction, setIsAction] = useState(false)
 
 	// DELETE PRODUCT IN BASKET
-
+	const dispatch = useDispatch()
 	const deleteProductToBasket = async (idProduct: string) => {
 		try {
+			dispatch(deletedProductInBasket())
 			if (!isAction) {
 				setIsAction(true)
 				const response = await axios.delete(
-					`${BACK_PORT}basket/delete-product`,
+					`${process.env.BACK_PORT}basket/delete-product`,
 					{
 						data: { idUser: user?._id, idProduct: idProduct },
 					}
@@ -104,10 +124,13 @@ export const useBasket = () => {
 	const addProductInBasket = async (productId: string, qty: number) => {
 		if (!isAction) {
 			setIsAction(true)
-			const response = await axios.patch(`${BACK_PORT}basket/add-product`, {
-				user: user?._id,
-				product: { productId, qty },
-			})
+			const response = await axios.patch(
+				`${process.env.BACK_PORT}basket/add-product`,
+				{
+					user: user?._id,
+					product: { productId, qty },
+				}
+			)
 			if (response) {
 				mutateBasket((prevBasketData) => {
 					if (!prevBasketData) return prevBasketData
