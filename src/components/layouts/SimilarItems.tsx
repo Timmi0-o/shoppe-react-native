@@ -46,16 +46,6 @@ export const SimilarItems = () => {
 					/>
 				)}
 			/>
-			{/* <ScrollView className={`flex-row w-full ${products ? '' : 'hidden'}`}>
-				{products?.map((item: ProductProps) => (
-					<ProductCard
-						key={item._id}
-						title={item.title}
-						price={item.price}
-						id={item._id}
-					/>
-				))}
-			</ScrollView> */}
 		</View>
 	)
 }

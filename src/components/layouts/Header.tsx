@@ -1,12 +1,10 @@
 import { Link, router, usePathname } from 'expo-router'
 import { useEffect, useState } from 'react'
 import {
-	NativeSyntheticEvent,
 	Platform,
 	Pressable,
 	ScrollView,
 	Text,
-	TextInputChangeEventData,
 	View,
 	ViewProps,
 } from 'react-native'
@@ -75,13 +73,10 @@ export const Header = ({ ...props }: ViewProps) => {
 							{/* NAVIGATION MENU */}
 							<View className='flex-row items-center'>
 								<Pressable
-									className={`${Platform.OS === 'ios' ? 'mt-[4px]' : ''}`}
+									className={`${Platform.OS === 'ios' ? 'mt-[4px]' : ''} `}
 									onPress={() => setBasketModalIsVisible(true)}
 								>
-									<View
-										style={{ marginRight: 7 }}
-										className='items-center justify-center w-[30px] h-[30px] rounded-full'
-									>
+									<View className='items-center justify-center w-[40px] h-[40px] rounded-full '>
 										<ShoppingCart />
 									</View>
 								</Pressable>
@@ -89,7 +84,7 @@ export const Header = ({ ...props }: ViewProps) => {
 									className={`${Platform.OS === 'ios' ? 'mt-[4px]' : ''}`}
 									onPress={() => setMenuModalIsVisible(true)}
 								>
-									<View className='items-center justify-center w-[30px] h-[30px] rounded-full'>
+									<View className='items-center justify-center w-[40px] h-[40px] rounded-full '>
 										<Burger />
 									</View>
 								</Pressable>
@@ -104,9 +99,7 @@ export const Header = ({ ...props }: ViewProps) => {
 					{/* SEARCH INPUT */}
 					<InputSearch
 						value={searchText}
-						onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) =>
-							setSearchText(e.nativeEvent.text)
-						}
+						onChange={(e) => setSearchText(e.nativeEvent.text)}
 						placeholder='Search'
 					/>
 				</Padding>

@@ -1,5 +1,5 @@
 import { Link } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Image, Pressable, Text, View } from 'react-native'
 import Animated from 'react-native-reanimated'
 import Swiper from 'react-native-swiper'
@@ -28,11 +28,17 @@ export default function Product() {
 	const { addProductInBasket, isAction, isBasked } = useBasket()
 
 	const [qty, setQty] = useState<number | null>(null)
+
 	const productInBasket = useSelector(
 		(state: any) => state.product.productInBasket
 	)
 
-	useEffect(() => {
+	// КОЛИЧЕСТВО ВЫБРАННОГО ТОВАРА И НОМЕР ПОДРОБНОСТЕЙ
+	const [productNumber, setProductNumber] = useState(1)
+	const [productErrors, setProductErrors] = useState<JSX.Element | string>('')
+	const [isSwitchesActive, setIsSwitchesActive] = useState(0)
+
+	useMemo(() => {
 		if (isBasked) {
 			isBasked.map((product) => {
 				if (product.productId === productHook?._id) {
@@ -51,16 +57,11 @@ export default function Product() {
 		}
 	}, [isBasked, productHook, dispatch])
 
-	// КОЛИЧЕСТВО ВЫБРАННОГО ТОВАРА И НОМЕР ПОДРОБНОСТЕЙ
-	const [productNumber, setProductNumber] = useState(1)
-	const [productErrors, setProductErrors] = useState<JSX.Element | string>('')
-	const [isSwitchesActive, setIsSwitchesActive] = useState(0)
 	// КАЛИБРОВКА ЦЕНЫ ТОВАРА
-	const [allPrice, setAllPrice] = useState(productHook?.price)
-
-	useEffect(() => {
-		setAllPrice(productHook?.price)
-	}, [productHook])
+	// const [allPrice, setAllPrice] = useState(productHook?.price)
+	// useEffect(() => {
+	// 	setAllPrice(productHook?.price)
+	// }, [productHook])
 
 	// button title
 	const [btnTitle, setBtnTitle] = useState('ADD TO CART')
@@ -87,7 +88,7 @@ export default function Product() {
 			return setProductErrors(
 				<Text>
 					Only registered users can add products to the cart,
-					<Link href={'/account'}>
+					<Link href={'/auth'}>
 						<Text className='text-black ml-[5px] underline'>log in!</Text>
 					</Link>
 				</Text>
@@ -111,7 +112,7 @@ export default function Product() {
 	}
 
 	// INITIAL PRICE PRODUCT
-	useEffect(() => {
+	useMemo(() => {
 		if (productInBasket && qty) {
 			setBtnTitle('IN THE BASKET')
 		} else {
@@ -148,7 +149,7 @@ export default function Product() {
 					{/* PRODUCT DETAILS */}
 					<Text className='text-[20px] mt-[24px]'>{productHook?.title}</Text>
 					{/* PRICE & SHARED  */}
-					<View className='flex-row justify-between'>
+					<View className='flex-row justify-between mb-[24px]'>
 						<Text className='text-[18px] text-[#A18A68] mt-[5px]'>
 							$ {productHook?.price},00
 						</Text>
@@ -159,12 +160,27 @@ export default function Product() {
 						{/* ERRORS  */}
 						<Animated.Text
 							// style={styleAddToCardErrors}
-							className='absolute text-[12px] text-red-600'
+							className='absolute top-[-25px] text-[12px] text-red-600'
 						>
 							{productErrors}
 						</Animated.Text>
 						{/* BUTTON  */}
-						<Button btnTitle={btnTitle} onClick={handleAddNewItemToBasket} />
+						<View className='flex-row items-center justify-between'>
+							<View className='flex-1 pr-[20px]'>
+								<Button
+									disabled={productInBasket && qty ? true : false}
+									btnTitle={btnTitle}
+									onClick={handleAddNewItemToBasket}
+								/>
+							</View>
+							<View
+								className={`${
+									productInBasket && qty ? '' : 'hidden'
+								} items-center justify-center w-[100px] h-[40px] rounded-[6px] bg-[#eee]`}
+							>
+								<Text className='text-[16px]'>{qty}</Text>
+							</View>
+						</View>
 					</View>
 					{/* DESCRIPTION  */}
 					<Text className='mt-[16px] text-[#707070]'>

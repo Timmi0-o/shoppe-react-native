@@ -1,13 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 import { useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
-import {
-	NativeSyntheticEvent,
-	Pressable,
-	Text,
-	TextInputChangeEventData,
-	View,
-} from 'react-native'
+import { Pressable, Text, View } from 'react-native'
 import { useUser } from '../../components/hooks/useUser'
 import Button from '../../components/shared/Button'
 import Input from '../../components/shared/Input'
@@ -58,7 +53,7 @@ export default function Auth() {
 				username,
 				password,
 			})
-			localStorage.setItem('token', response.data.token)
+			AsyncStorage.setItem('token', response.data.token)
 			setToken(response.data.token)
 
 			setButtonActive(false)
@@ -68,7 +63,7 @@ export default function Auth() {
 		} catch (error: any) {
 			setButtonActive(false)
 			setLogRegNotification('')
-			setUserErrors(`${error?.response?.data?.message}!`)
+			setUserErrors(`${error?.message}!`)
 		}
 	}
 
@@ -100,7 +95,7 @@ export default function Auth() {
 				email,
 				password,
 			})
-			localStorage.setItem('token', data.data.token)
+			AsyncStorage.setItem('token', data.data.token)
 			if (data) {
 				login()
 			}
@@ -156,6 +151,7 @@ export default function Auth() {
 					<View className='w-full flex-row justify-between items-center h-[52px] px-[8px] bg-[#EFEFEF] mt-[24px] rounded-[7px] mb-[89px]'>
 						{variables.map((item, i) => (
 							<Pressable
+								key={i}
 								onPress={() => setIsVariableActive(i)}
 								className={`${
 									isVariableActive === i ? 'bg-white' : ''
@@ -170,7 +166,7 @@ export default function Auth() {
 						{/* ERROR MESSAGES  */}
 						<View className='absolute w-full top-[-50px] mb-[10px]'>
 							{validateErrors.map((error, i) => (
-								<View className={`${error ? '' : 'hidden'}`}>
+								<View key={i} className={`${error ? '' : 'hidden'}`}>
 									<Text
 										key={i}
 										className='text-[14px] font-bold text-red-600 text-center'
@@ -184,28 +180,25 @@ export default function Auth() {
 						<View>
 							{isVariableActive === 1 && (
 								<Input
+									setValue={setEmail}
 									classNameContainer='mb-[47px]'
 									placeholder='Email'
 									value={email}
-									onChange={(
-										e: NativeSyntheticEvent<TextInputChangeEventData>
-									) => setEmail(e.nativeEvent.text)}
+									onChange={(e) => setEmail(e.nativeEvent.text)}
 								/>
 							)}
 							<Input
+								setValue={setUsername}
 								classNameContainer='mb-[47px]'
 								placeholder='Username'
 								value={username}
-								onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) =>
-									setUsername(e.nativeEvent.text)
-								}
+								onChange={(e) => setUsername(e.nativeEvent.text)}
 							/>
 							<Input
+								setValue={setPassword}
 								placeholder='Password'
 								value={password}
-								onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) =>
-									setPassword(e.nativeEvent.text)
-								}
+								onChange={(e) => setPassword(e.nativeEvent.text)}
 							/>
 						</View>
 					</View>
