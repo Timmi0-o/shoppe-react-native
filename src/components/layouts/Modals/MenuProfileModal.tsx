@@ -1,5 +1,5 @@
-import { Link } from 'expo-router'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import { Link, router } from 'expo-router'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
 	Modal,
 	NativeSyntheticEvent,
@@ -11,35 +11,48 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CloseButton from '../../../../assets/svg/CloseButton'
+import LogOut from '../../../../assets/svg/LogOut'
+import Profile from '../../../../assets/svg/Profile'
 import ShoppingCart from '../../../../assets/svg/ShoppingCart'
-import { Input } from '../../shared/Input'
+import { useUser } from '../../hooks/useUser'
+import { InputSearch } from '../../shared/InputSearch'
 import Padding from '../../shared/Padding'
 
 interface MenuProfileModal {
 	isVisible: boolean
 	setIsVisible: Dispatch<SetStateAction<boolean>>
+	setBasketVisible: Dispatch<SetStateAction<boolean>>
 }
 
 export const MenuProfileModal = ({
 	isVisible,
 	setIsVisible,
+	setBasketVisible,
 }: MenuProfileModal) => {
 	const [searchText, setSearchText] = useState('')
 	const insets = useSafeAreaInsets()
+
+	// GET USER DATA
+	const { user, deleteToken, mutateUser } = useUser()
+	const [href, setHref] = useState('/auth')
+
+	useEffect(() => {
+		setHref(user ? `/account/${user.username}` : '/auth')
+	}, [user, mutateUser, isVisible])
+
 	return (
 		<Modal
-			animationType='slide'
-			presentationStyle='pageSheet'
 			visible={isVisible}
-			onRequestClose={(prev) => setIsVisible(!prev)}
+			onRequestClose={() => setIsVisible(false)}
+			animationType='slide'
+			presentationStyle='formSheet'
 		>
 			<Padding>
 				<View
-					style={{ marginTop: Platform.OS === 'ios' ? insets.top / 2 : 0 }}
-					className='flex-row items-center justify-between mb-[17px]'
+					style={{ marginTop: Platform.OS === 'ios' ? insets.top / 2 : 16 }}
+					className='flex-row justify-between mb-[17px]'
 				>
-					{/* BASKET GO BACK ARROW  */}
-
+					{/* TITLE */}
 					<Link href={'/'}>
 						<Text
 							style={{ fontFamily: 'AllertaStencil' }}
@@ -55,7 +68,7 @@ export const MenuProfileModal = ({
 					<View className='flex-row items-center'>
 						<Pressable
 							className={`${Platform.OS === 'ios' ? 'mt-[4px]' : ''}`}
-							onPress={() => setIsVisible(true)}
+							onPress={() => setBasketVisible(true)}
 						>
 							<View
 								style={{ marginRight: 7 }}
@@ -75,13 +88,14 @@ export const MenuProfileModal = ({
 					</View>
 				</View>
 				{/* SEARCH INPUT */}
-				<Input
+				<InputSearch
 					value={searchText}
 					onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) =>
 						setSearchText(e.nativeEvent.text)
 					}
 					placeholder='Search'
 				/>
+				{/* GENERAL LINKS  */}
 				<View className='py-[39px] border-b-[1px] border-b-[#D8D8D8]'>
 					<View>
 						{links.map((link, i) => (
@@ -98,6 +112,42 @@ export const MenuProfileModal = ({
 							</Pressable>
 						))}
 					</View>
+				</View>
+				{/* ACCOUNT & LOGOUT  */}
+				<View className='mt-[24px]'>
+					{/*GO TO ACCOUNT  */}
+					<Pressable
+						className='mb-[32px]'
+						onPress={() => {
+							setIsVisible(false)
+							router.push(href)
+						}}
+					>
+						<View className='flex-row items-center rounded-[4px] px-[4px] py-[2px]'>
+							<Profile className='mr-[10px]' />
+							<Text className='text-[20px] font-normal leading-[26px]'>
+								My account
+							</Text>
+						</View>
+					</Pressable>
+					{/* LOGOUT  */}
+					{user?.username && (
+						<Pressable
+							onPress={() => {
+								setIsVisible(false)
+								deleteToken()
+							}}
+						>
+							<Link href='/'>
+								<View className='flex-row items-center gap-[10px] text-left rounded-[4px] px-[4px] py-[2px]'>
+									<LogOut className='mr-[10px]' />
+									<Text className='text-[20px] font-normal leading-[26px]'>
+										Logout
+									</Text>
+								</View>
+							</Link>
+						</Pressable>
+					)}
 				</View>
 			</Padding>
 		</Modal>

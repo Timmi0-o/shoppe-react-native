@@ -13,22 +13,32 @@ import {
 import ArrowBack from '../../../assets/svg/ArrowBack'
 import { Burger } from '../../../assets/svg/Burger'
 import ShoppingCart from '../../../assets/svg/ShoppingCart'
-import { Input } from '../shared/Input'
+import { InputSearch } from '../shared/InputSearch'
 import Padding from '../shared/Padding'
 import { BasketModal } from './Modals/BasketModal'
 import { MenuProfileModal } from './Modals/MenuProfileModal'
 
 export const Header = ({ ...props }: ViewProps) => {
 	const [searchText, setSearchText] = useState('')
-	const [navigation, setNavigation] = useState(true)
 	const path = usePathname()
 
 	const [basketModalIsVisible, setBasketModalIsVisible] = useState(false)
 	const [menuModalIsVisible, setMenuModalIsVisible] = useState(false)
 
+	const [groups, setGroups] = useState(true)
+	const [inputSearch, setInputSearch] = useState(true)
+
 	useEffect(() => {
 		if (path.includes('product')) {
-			setNavigation(false)
+			setGroups(false)
+			setInputSearch(false)
+		} else {
+			setGroups(true)
+			setInputSearch(true)
+		}
+
+		if (path.includes('auth') || path.includes('account')) {
+			setGroups(false)
 		}
 	}, [path])
 
@@ -88,10 +98,11 @@ export const Header = ({ ...props }: ViewProps) => {
 					)}
 				</View>
 			</Padding>
-			<View className={`${navigation ? '' : 'hidden'}`}>
+
+			<View className={`${inputSearch ? '' : 'hidden'}`}>
 				<Padding>
 					{/* SEARCH INPUT */}
-					<Input
+					<InputSearch
 						value={searchText}
 						onChange={(e: NativeSyntheticEvent<TextInputChangeEventData>) =>
 							setSearchText(e.nativeEvent.text)
@@ -99,7 +110,8 @@ export const Header = ({ ...props }: ViewProps) => {
 						placeholder='Search'
 					/>
 				</Padding>
-
+			</View>
+			<View className={`${groups ? '' : 'hidden'}`}>
 				{/* GROUPS */}
 				<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 					<View className='flex-row gap-[8px] my-[16px] ml-[1%]'>
@@ -120,6 +132,7 @@ export const Header = ({ ...props }: ViewProps) => {
 				setIsVisible={setBasketModalIsVisible}
 			/>
 			<MenuProfileModal
+				setBasketVisible={setBasketModalIsVisible}
 				isVisible={menuModalIsVisible}
 				setIsVisible={setMenuModalIsVisible}
 			/>

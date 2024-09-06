@@ -1,4 +1,3 @@
-import { BACK_PORT } from '@env'
 import { usePathname } from 'expo-router'
 import { useEffect, useState } from 'react'
 import useSWR, { SWRResponse } from 'swr'
@@ -29,7 +28,10 @@ export const useProduct = () => {
 		data: productData,
 		mutate: mutateProductData,
 	}: SWRResponse<Product, any, any> = useSWR(
-		() => (productId ? { url: `${BACK_PORT}products/${productId}` } : null),
+		() =>
+			productId
+				? { url: `${process.env.BACK_PORT}products/${productId}` }
+				: null,
 		fetcher
 	)
 

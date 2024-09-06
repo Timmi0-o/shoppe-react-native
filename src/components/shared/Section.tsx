@@ -1,5 +1,11 @@
 import { ReactNode } from 'react'
-import { Platform, ScrollView, ScrollViewProps, StyleSheet } from 'react-native'
+import {
+	Platform,
+	ScrollView,
+	ScrollViewProps,
+	StyleSheet,
+	View,
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Footer } from '../layouts/Footer'
 import { Header } from '../layouts/Header'
@@ -25,7 +31,7 @@ export const Section = ({
 				/>
 			)}
 
-			{children}
+			<View className='min-h-[33vh]'>{children}</View>
 			{!noFooter && <Footer />}
 		</ScrollView>
 	)

@@ -1,7 +1,6 @@
 import { Link } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { Image, Pressable, Text, View } from 'react-native'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
 import Swiper from 'react-native-swiper'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,8 +15,8 @@ import {
 	addedProductInBasket,
 	deletedProductInBasket,
 } from '../../../lib/reducers/Product'
-import { useBgColorMove } from '../../../utils/AnimationReady'
 import { SimilarItems } from '../../layouts/SimilarItems'
+import Button from '../../shared/Button'
 import Padding from '../../shared/Padding'
 
 export default function Product() {
@@ -120,15 +119,6 @@ export default function Product() {
 		}
 	}, [productInBasket, qty])
 
-	// ANIMATIONS
-	const {
-		style: btnAddToCardStyle,
-		colorMoveAnimation: btnAddToCardAnimation,
-	} = useBgColorMove('transparent', 'black', 200)
-
-	const { style: textStyle, colorMoveAnimation: textAnimation } =
-		useBgColorMove('black', 'white', 200, true)
-
 	return (
 		<View>
 			{/* LOADING  */}
@@ -174,23 +164,7 @@ export default function Product() {
 							{productErrors}
 						</Animated.Text>
 						{/* BUTTON  */}
-						<GestureDetector
-							gesture={Gesture.Race(btnAddToCardAnimation, textAnimation)}
-						>
-							<Animated.View
-								style={btnAddToCardStyle}
-								className='justify-center items-center h-[40px] border-[1px] border-black rounded-[4px] mt-[24px]'
-							>
-								<Pressable
-									className='flex-row justify-center w-full'
-									onPress={() => {
-										handleAddNewItemToBasket()
-									}}
-								>
-									<Animated.Text style={textStyle}>{btnTitle}</Animated.Text>
-								</Pressable>
-							</Animated.View>
-						</GestureDetector>
+						<Button btnTitle={btnTitle} onClick={handleAddNewItemToBasket} />
 					</View>
 					{/* DESCRIPTION  */}
 					<Text className='mt-[16px] text-[#707070]'>

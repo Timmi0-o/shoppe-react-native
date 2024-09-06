@@ -36,7 +36,7 @@ export default function Home() {
 
 	const onRefresh = async () => {
 		setRefreshing(true)
-		await getProducts()
+		const response = await getProducts()
 		setRefreshing(false)
 	}
 
@@ -68,7 +68,11 @@ export default function Home() {
 					))}
 				</View>
 				{/* PRODUCT NOT FOUND  */}
-				<Text className={`text-[22px] mt-[10vw] ${!products ? '' : 'hidden'}`}>
+				<Text
+					className={`text-[22px] text-center mt-[10vw] ${
+						!products ? '' : 'hidden'
+					}`}
+				>
 					Упс, кажется сейчас ничего нет...
 				</Text>
 			</Padding>

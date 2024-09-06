@@ -1,26 +1,22 @@
-import { Platform, TextInput, TextInputProps, View } from 'react-native'
-import Search from '../../../assets/svg/Search'
+import React from 'react'
+import { TextInput, TextInputProps, View } from 'react-native'
 
-export const Input = ({ ...props }: TextInputProps) => {
-	const platformSpecificProps: TextInputProps =
-		Platform.select({
-			ios: {
-				autoCorrect: true,
-				clearButtonMode: 'while-editing',
-			},
-			android: {
-				underlineColorAndroid: 'transparent',
-			},
-		}) || {}
+interface InputProps extends TextInputProps {
+	classNameContainer?: string
+}
 
+const Input = ({ classNameContainer, ...props }: InputProps) => {
 	return (
-		<View className='flex-row items-center px-[10px] w-full h-[32px] bg-[#EFEFEF] rounded-[4px]'>
-			<Search className='mr-[8px] w-[12px] h-[12px]' />
+		<View
+			className={`w-full h-[25px] pb-[5px] border-b-[1px] border-b-[#D8D8D8] ${classNameContainer}`}
+		>
 			<TextInput
-				className='text-[#707070] w-full text-[12px]'
 				{...props}
-				{...platformSpecificProps}
+				placeholder={props.placeholder}
+				className={`${!props.value ? 'text-[#707070]' : 'text-black'}`}
 			/>
 		</View>
 	)
 }
+
+export default Input

@@ -14,7 +14,7 @@ export const BasketModal = ({ isVisible, setIsVisible }: BasketModal) => {
 	return (
 		<Modal
 			animationType='slide'
-			presentationStyle='pageSheet'
+			presentationStyle='formSheet'
 			visible={isVisible}
 			onRequestClose={(prev) => setIsVisible(!prev)}
 		>
@@ -28,7 +28,7 @@ export const BasketModal = ({ isVisible, setIsVisible }: BasketModal) => {
 							<ArrowBack />
 						</Pressable>
 					</View>
-					<Text className='text-[22px] w-full text-center'>Basket Modal</Text>
+					<Text className='text-[22px] mr-[10px] mx-auto'>Shopping bag</Text>
 				</View>
 			</Padding>
 		</Modal>
