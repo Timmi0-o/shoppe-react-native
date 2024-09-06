@@ -7,9 +7,10 @@ import { useBgColorMove } from '../../utils/AnimationReady'
 interface ButtonProps extends ViewProps {
 	btnTitle: string
 	onClick: () => void
+	disabled?: boolean
 }
 
-const Button = ({ onClick, btnTitle, ...props }: ButtonProps) => {
+const Button = ({ onClick, btnTitle, disabled, ...props }: ButtonProps) => {
 	// ANIMATIONS
 	const {
 		style: btnAddToCardStyle,
@@ -25,14 +26,25 @@ const Button = ({ onClick, btnTitle, ...props }: ButtonProps) => {
 		>
 			<Animated.View
 				{...props}
-				style={btnAddToCardStyle}
-				className='justify-center items-center h-[40px] border-[1px] border-black rounded-[4px] mt-[24px]'
+				style={[
+					disabled ? null : btnAddToCardStyle,
+					{ backgroundColor: disabled ? 'black' : 'transparent' },
+				]}
+				className={`justify-center items-center h-[40px] border-[1px] border-black rounded-[4px]`}
 			>
 				<Pressable
-					className='flex-row justify-center w-full'
-					onPress={() => onClick()}
+					disabled={disabled}
+					className={`flex-row justify-center w-full`}
+					onPress={() => (disabled ? null : onClick())}
 				>
-					<Animated.Text style={textStyle}>{btnTitle}</Animated.Text>
+					<Animated.Text
+						style={[
+							disabled ? null : textStyle,
+							{ color: disabled ? 'white' : 'black' },
+						]}
+					>
+						{btnTitle}
+					</Animated.Text>
 				</Pressable>
 			</Animated.View>
 		</GestureDetector>
