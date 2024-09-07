@@ -1,5 +1,10 @@
 import { Dispatch, SetStateAction } from 'react'
-import { Pressable, PressableProps, Text, View } from 'react-native'
+import { Pressable, PressableProps, Text } from 'react-native'
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withTiming,
+} from 'react-native-reanimated'
 
 interface RightsProps extends PressableProps {
 	rightsText: string
@@ -13,20 +18,33 @@ export const Rights = ({
 	rightsSetState,
 	...props
 }: RightsProps) => {
+	const color = useSharedValue('transparent')
+	const style = useAnimatedStyle(() => {
+		return {
+			backgroundColor: color.value,
+		}
+	})
+
+	const switchColor = () => {
+		rightsSetState((prev) => !prev)
+		if (rightsState) {
+			color.value = withTiming('black', { duration: 300 })
+		} else {
+			color.value = withTiming('transparent', { duration: 200 })
+		}
+	}
+
 	return (
 		<Pressable
 			{...props}
-			onPress={() => rightsSetState(!rightsState)}
-			className='flex-row items-center gap-[8px] w-full mb-[26px] mt-[11px]'
+			onPress={() => switchColor()}
+			className='flex-row items-center mb-[16px] py-[5px]'
 		>
-			<View
-				className={`w-[13px] h-[13px] lg:size-[18px] border-[1px] border-black rounded-[3px] ${
-					rightsState && 'bg-black'
-				}`}
-			></View>
-			<Text className='w-fit text-[12px] md:text-[16px] text-[#707070]'>
-				{rightsText}
-			</Text>
+			<Animated.View
+				style={style}
+				className={`w-[13px] h-[13px] border-[1px] border-black rounded-[3px] mr-[8px]`}
+			></Animated.View>
+			<Text className='text-[12px] text-[#707070]'>{rightsText}</Text>
 		</Pressable>
 	)
 }
