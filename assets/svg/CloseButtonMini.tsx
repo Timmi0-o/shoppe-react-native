@@ -2,9 +2,9 @@ import * as React from 'react'
 import Svg, { Defs, G, Path, SvgProps } from 'react-native-svg'
 const CloseButtonMini = (props: SvgProps) => (
 	<Svg
-		width={props.width || 16}
-		height={props.height || 16}
-		viewBox='0 0 13 13'
+		width={props.width}
+		height={props.height}
+		viewBox='0 0 16 16'
 		fill='none'
 		{...props}
 	>
